@@ -1,0 +1,27 @@
+@model Orcking.ViewModels.LoginViewModel
+@using Orcking.Models
+@{
+    ViewData["Title"] = "Entrar";
+    var users = (IEnumerable<ApplicationUser>)ViewBag.Users;
+}
+
+<section class="login-panel">
+    <div class="login-copy">
+        <span class="eyebrow">MVP academico</span>
+        <h1>Orcking</h1>
+        <p>Plataforma para aplicar provas com modelos aleatorios, marca d'agua individual e auditoria durante a tentativa.</p>
+    </div>
+
+    <form asp-action="Login" method="post" class="surface form-stack">
+        <h2>Acessar ambiente</h2>
+        <label asp-for="UserId">Perfil de teste</label>
+        <select asp-for="UserId" class="form-select">
+            <option value="">Selecione</option>
+            @foreach (var user in users)
+            {
+                <option value="@user.Id">@user.Name - @user.Role</option>
+            }
+        </select>
+        <button class="btn btn-primary w-100" type="submit">Entrar</button>
+    </form>
+</section>

@@ -1,0 +1,34 @@
+@model Orcking.ViewModels.ProfessorExamForm
+@{
+    ViewData["Title"] = "Nova prova";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Professor</span>
+        <h1>Nova prova</h1>
+    </div>
+</div>
+
+<form asp-action="Create" method="post" class="surface form-grid">
+    <div>
+        <label asp-for="Title">Titulo</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+    <div>
+        <label asp-for="DurationMinutes">Duracao em minutos</label>
+        <input asp-for="DurationMinutes" class="form-control" type="number" />
+    </div>
+    <div>
+        <label asp-for="ModelCount">Quantidade de modelos</label>
+        <input asp-for="ModelCount" class="form-control" type="number" />
+    </div>
+    <div class="full">
+        <label asp-for="Description">Descricao</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="full actions-row">
+        <a class="btn btn-outline-light" asp-action="Index">Voltar</a>
+        <button class="btn btn-primary" type="submit">Criar</button>
+    </div>
+</form>

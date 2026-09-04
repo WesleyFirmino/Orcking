@@ -1,0 +1,41 @@
+@model IEnumerable<Orcking.Models.Exam>
+@using Orcking.Models
+@{
+    ViewData["Title"] = "Aluno";
+    var attempts = (IEnumerable<ExamAttempt>)ViewBag.Attempts;
+}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Aluno</span>
+        <h1>Provas disponiveis</h1>
+    </div>
+</div>
+
+<section class="exam-grid">
+    @foreach (var exam in Model)
+    {
+        var attempt = attempts.OrderByDescending(item => item.StartedAtUtc).FirstOrDefault(item => item.ExamId == exam.Id);
+        <article class="surface exam-card">
+            <h2>@exam.Title</h2>
+            <p>@exam.Description</p>
+            <div class="card-meta">
+                <span>@exam.DurationMinutes min</span>
+                <span>@exam.Questions.Count questoes</span>
+                <span>@exam.ModelCount modelos</span>
+            </div>
+            @if (attempt is null)
+            {
+                <a class="btn btn-primary" asp-controller="Exams" asp-action="Prepare" asp-route-id="@exam.Id">Iniciar prova</a>
+            }
+            else if (attempt.Status == AttemptStatus.BlockedByViolation)
+            {
+                <a class="btn btn-warning" asp-controller="Exams" asp-action="Resume" asp-route-examId="@exam.Id">Retomar ultima chance</a>
+            }
+            else
+            {
+                <span class="status-pill">@attempt.Status - Nota @(attempt.Score?.ToString("0.00") ?? "-")</span>
+            }
+        </article>
+    }
+</section>

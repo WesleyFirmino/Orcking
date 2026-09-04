@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: orcking-postgres
+    environment:
+      POSTGRES_DB: orcking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - orcking-postgres:/var/lib/postgresql/data
+
+volumes:
+  orcking-postgres:

@@ -1,0 +1,44 @@
+@model IEnumerable<Orcking.Models.Exam>
+@{
+    ViewData["Title"] = "Professor";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Professor</span>
+        <h1>Provas</h1>
+    </div>
+    <a class="btn btn-primary" asp-action="Create">Nova prova</a>
+</div>
+
+<div class="surface table-wrap">
+    <table class="table table-dark align-middle">
+        <thead>
+            <tr>
+                <th>Prova</th>
+                <th>Status</th>
+                <th>Questoes</th>
+                <th>Modelos</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var exam in Model)
+            {
+                <tr>
+                    <td>
+                        <strong>@exam.Title</strong>
+                        <small>@exam.Description</small>
+                    </td>
+                    <td><span class="status-pill">@exam.Status</span></td>
+                    <td>@exam.Questions.Count</td>
+                    <td>@exam.Models.Count</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-light" asp-action="Details" asp-route-id="@exam.Id">Editar</a>
+                        <a class="btn btn-sm btn-outline-light" asp-action="Attempts" asp-route-id="@exam.Id">Auditoria</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

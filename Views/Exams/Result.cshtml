@@ -1,0 +1,12 @@
+@model Orcking.Models.ExamAttempt
+@{
+    ViewData["Title"] = "Resultado";
+}
+
+<section class="result-panel surface">
+    <span class="eyebrow">Resultado</span>
+    <h1>@Model.Exam?.Title</h1>
+    <div class="result-score">@(Model.Score?.ToString("0.00") ?? "-")</div>
+    <p>Status: <strong>@Model.Status</strong></p>
+    <a class="btn btn-primary" asp-controller="Student" asp-action="Index">Voltar para provas</a>
+</section>

@@ -1,0 +1,79 @@
+@model Orcking.ViewModels.ExamTakingViewModel
+@{
+    ViewData["Title"] = "Prova";
+    ViewData["BodyClass"] = "exam-mode";
+}
+
+<div class="exam-watermark" aria-hidden="true">@Model.Watermark</div>
+<div class="photo-shield" aria-hidden="true"></div>
+
+<div class="fullscreen-gate surface" id="fullscreenGate">
+    <span class="eyebrow">Tela cheia obrigatoria</span>
+    <h1>Ative a tela cheia para visualizar a prova</h1>
+    <p>A tentativa ja foi criada. Sair da tela cheia durante a prova registra violacao critica.</p>
+    <button class="btn btn-primary" id="gateFullscreenButton" type="button">Entrar em tela cheia</button>
+</div>
+
+<section class="exam-topbar surface">
+    <div>
+        <span class="eyebrow">Modelo @Model.Attempt.ExamModel?.Code</span>
+        <h1>@Model.Attempt.Exam?.Title</h1>
+    </div>
+    <div class="timer" data-ends-at="@Model.EndsAtUtc.ToString("O")">--:--</div>
+    <button class="btn btn-outline-light" id="fullscreenButton" type="button">Tela cheia</button>
+</section>
+
+<form asp-action="Submit" asp-route-id="@Model.Attempt.Id" method="post" class="exam-form" id="examForm">
+    @for (var index = 0; index < Model.Blueprint.Questions.Count; index++)
+    {
+        var item = Model.Blueprint.Questions[index];
+        var question = Model.Questions[item.QuestionId];
+        <article class="surface question-item locked-copy">
+            <span class="eyebrow">Questao @(index + 1) - @question.Topic - T@Model.Attempt.Id-Q@question.Id</span>
+            <h2>@question.Statement</h2>
+            <div class="answer-list">
+                @foreach (var optionId in item.OptionIds)
+                {
+                    var option = Model.Options[optionId];
+                    <label>
+                        <input type="radio"
+                               name="q_@question.Id"
+                               value="@option.Id"
+                               data-question-id="@question.Id"
+                               data-attempt-id="@Model.Attempt.Id"
+                               @(Model.SelectedAnswers.GetValueOrDefault(question.Id) == option.Id ? "checked" : "") />
+                        <span>@option.Text</span>
+                    </label>
+                }
+            </div>
+        </article>
+    }
+
+    <div class="submit-bar surface">
+        <div>
+            <strong>Aviso de monitoramento</strong>
+            <span>Troca de aba, minimizar ou sair de tela cheia registra violacao critica.</span>
+        </div>
+        <button class="btn btn-primary" type="submit">Finalizar prova</button>
+    </div>
+</form>
+
+<div class="modal fade" id="violationModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content violation-dialog">
+            <div class="modal-header">
+                <h5 class="modal-title">Prova interrompida</h5>
+            </div>
+            <div class="modal-body">
+                Uma violacao critica foi registrada. No primeiro evento, a tentativa fica bloqueada para retomada. No segundo, a nota e zerada.
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" asp-controller="Student" asp-action="Index">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/exam-security.js" asp-append-version="true"></script>
+}
