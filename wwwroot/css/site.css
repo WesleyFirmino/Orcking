@@ -74,12 +74,27 @@ a {
   backdrop-filter: blur(16px);
 }
 
-.login-panel {
+.login-panel,
+.student-home,
+.staff-login-page {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
   gap: 32px;
   align-items: center;
   min-height: 68vh;
+}
+
+.login-panel {
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
+.student-home {
+  grid-template-columns: minmax(280px, 820px);
+  justify-content: center;
+}
+
+.staff-login-page {
+  grid-template-columns: minmax(280px, 460px);
+  justify-content: center;
 }
 
 .student-entry h1,
@@ -109,8 +124,13 @@ a {
 }
 
 .staff-login {
-  justify-self: end;
   width: min(100%, 420px);
+}
+
+.staff-login h1 {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 850;
 }
 
 .eyebrow {
@@ -437,6 +457,8 @@ td small {
 
 @media (max-width: 860px) {
   .login-panel,
+  .student-home,
+  .staff-login-page,
   .split,
   .form-grid,
   .metrics,

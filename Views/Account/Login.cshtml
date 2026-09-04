@@ -1,9 +1,9 @@
 @model Orcking.ViewModels.LoginViewModel
 @{
-    ViewData["Title"] = "Entrar";
+    ViewData["Title"] = "Aluno";
 }
 
-<section class="login-panel">
+<section class="student-home">
     <form asp-action="StudentLogin" method="post" class="student-entry">
         <span class="eyebrow">Area do aluno</span>
         <h1>Orcking</h1>
@@ -13,13 +13,5 @@
             <button class="btn btn-primary" type="submit">Entrar</button>
         </div>
         <span asp-validation-for="StudentFullName" class="text-warning"></span>
-    </form>
-
-    <form asp-action="StaffLogin" method="post" class="surface form-stack staff-login">
-        <h2>Login</h2>
-        <label asp-for="StaffEmail">Professor ou administrador</label>
-        <input asp-for="StaffEmail" class="form-control" type="email" placeholder="email@instituicao.com" />
-        <span asp-validation-for="StaffEmail" class="text-warning"></span>
-        <button class="btn btn-primary w-100" type="submit">Acessar</button>
     </form>
 </section>

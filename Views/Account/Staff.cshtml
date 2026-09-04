@@ -1,0 +1,17 @@
+@model Orcking.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login administrativo";
+}
+
+<section class="staff-login-page">
+    <form asp-action="StaffLogin" method="post" class="surface form-stack staff-login">
+        <span class="eyebrow">Area restrita</span>
+        <h1>Login</h1>
+        <p class="muted">Acesso exclusivo para professores e administradores.</p>
+        <label asp-for="StaffEmail">Email institucional</label>
+        <input asp-for="StaffEmail" class="form-control" type="email" placeholder="email@instituicao.com" />
+        <span asp-validation-for="StaffEmail" class="text-warning"></span>
+        <button class="btn btn-primary w-100" type="submit">Acessar</button>
+        <a class="btn btn-outline-light w-100" asp-action="Login">Voltar para aluno</a>
+    </form>
+</section>

@@ -13,6 +13,11 @@ public class AccountController(AppDbContext db) : Controller
         return View(new LoginViewModel());
     }
 
+    public IActionResult Staff()
+    {
+        return View(new LoginViewModel());
+    }
+
     [HttpPost]
     public async Task<IActionResult> StudentLogin(LoginViewModel model)
     {
@@ -41,7 +46,7 @@ public class AccountController(AppDbContext db) : Controller
         if (user is null)
         {
             ModelState.AddModelError(nameof(model.StaffEmail), "Login administrativo nao encontrado.");
-            return View("Login", model);
+            return View("Staff", model);
         }
 
         SignIn(user);
