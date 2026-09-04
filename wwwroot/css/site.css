@@ -52,17 +52,18 @@ a {
 
 .app-shell {
   padding-top: 32px;
-  padding-bottom: 80px;
+  padding-bottom: 40px;
 }
 
 .app-footer {
-  position: fixed;
-  inset-inline: 0;
-  bottom: 0;
   padding: 14px 0;
   color: var(--muted);
   background: rgba(18, 18, 18, 0.85);
   border-top: 1px solid var(--line);
+}
+
+.exam-mode .app-footer {
+  display: none;
 }
 
 .surface {
@@ -343,7 +344,7 @@ td small {
 
 .submit-bar {
   position: sticky;
-  bottom: 72px;
+  bottom: 16px;
   display: flex;
   gap: 16px;
   align-items: center;
