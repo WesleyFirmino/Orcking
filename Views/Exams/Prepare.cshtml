@@ -7,11 +7,6 @@
     <span class="eyebrow">Entrada monitorada</span>
     <h1>@Model.Title</h1>
     <p>Ao iniciar, o navegador tentara entrar em tela cheia. Sair da tela cheia, alternar aba ou minimizar a janela registra violacao critica.</p>
-    <div class="card-meta justify-content-center">
-        <span>@Model.DurationMinutes min</span>
-        <span>@Model.Questions.Count questoes</span>
-        <span>@Model.ModelCount modelos</span>
-    </div>
     <button class="btn btn-primary mt-4" id="startExamButton" data-start-url="@Url.Action("Start", "Exams", new { id = Model.Id })" type="button">
         Entrar em tela cheia e iniciar
     </button>

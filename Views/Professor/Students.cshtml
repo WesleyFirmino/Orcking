@@ -1,6 +1,7 @@
 @model IEnumerable<Orcking.Models.ApplicationUser>
 @{
     ViewData["Title"] = "Alunos";
+    var classes = (IEnumerable<Orcking.Models.ClassRoom>)ViewBag.Classes;
 }
 
 <div class="page-heading">
@@ -9,6 +10,7 @@
         <h1>Alunos</h1>
         <p>Cadastro simples para liberar acesso as provas do MVP.</p>
     </div>
+    <a class="btn btn-outline-light" asp-action="Classes">Cadastrar classes</a>
 </div>
 
 <div class="split">
@@ -17,12 +19,19 @@
         <input name="name" class="form-control" placeholder="Nome completo" />
         <input name="email" class="form-control" type="email" placeholder="Email institucional" />
         <input name="registrationCode" class="form-control" placeholder="RA ou matricula" />
+        <select name="classRoomId" class="form-select">
+            <option value="">Selecione a sala</option>
+            @foreach (var classRoom in classes)
+            {
+                <option value="@classRoom.Id">@classRoom.Name</option>
+            }
+        </select>
         <button class="btn btn-primary" type="submit">Cadastrar aluno</button>
     </form>
 
     <form asp-action="ImportStudentsCsv" method="post" enctype="multipart/form-data" class="surface form-stack">
         <h2>Importar CSV</h2>
-        <p class="muted">Formato: Nome;Email;RA</p>
+        <p class="muted">Formato: Nome;Email;RA;IdDaSala</p>
         <input name="file" class="form-control" type="file" accept=".csv,.txt" />
         <button class="btn btn-outline-light" type="submit">Importar alunos</button>
     </form>
@@ -35,6 +44,7 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>RA</th>
+                <th>Sala</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +54,7 @@
                     <td>@student.Name</td>
                     <td>@student.Email</td>
                     <td>@student.RegistrationCode</td>
+                    <td>@student.ClassRoom?.Name</td>
                 </tr>
             }
         </tbody>

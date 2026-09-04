@@ -8,35 +8,60 @@ namespace Orcking.Controllers;
 
 public class AccountController(AppDbContext db) : Controller
 {
-    public async Task<IActionResult> Login()
+    public IActionResult Login()
     {
-        ViewBag.Users = await db.Users.OrderBy(user => user.Role).ThenBy(user => user.Name).ToListAsync();
         return View(new LoginViewModel());
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> StudentLogin(LoginViewModel model)
     {
-        var user = await db.Users.FindAsync(model.UserId);
+        var normalizedName = model.StudentFullName.Trim().ToUpperInvariant();
+        var user = await db.Users
+            .Include(item => item.ClassRoom)
+            .FirstOrDefaultAsync(item => item.Role == UserRole.Student && item.Name.ToUpper() == normalizedName);
+
         if (user is null)
         {
-            ModelState.AddModelError("", "Selecione um usuario valido.");
-            ViewBag.Users = await db.Users.OrderBy(item => item.Role).ThenBy(item => item.Name).ToListAsync();
-            return View(model);
+            ModelState.AddModelError(nameof(model.StudentFullName), "Aluno nao encontrado. Confira o nome completo informado.");
+            return View("Login", model);
         }
 
-        HttpContext.Session.SetInt32("UserId", user.Id);
-        HttpContext.Session.SetString("UserName", user.Name);
-        HttpContext.Session.SetString("UserRole", user.Role.ToString());
+        SignIn(user);
+        return RedirectToAction("Index", "Student");
+    }
 
-        return user.Role == UserRole.Teacher
-            ? RedirectToAction("Index", "Professor")
-            : RedirectToAction("Index", "Student");
+    [HttpPost]
+    public async Task<IActionResult> StaffLogin(LoginViewModel model)
+    {
+        var normalizedEmail = model.StaffEmail.Trim().ToUpperInvariant();
+        var user = await db.Users.FirstOrDefaultAsync(item =>
+            (item.Role == UserRole.Teacher || item.Role == UserRole.Admin) && item.Email.ToUpper() == normalizedEmail);
+
+        if (user is null)
+        {
+            ModelState.AddModelError(nameof(model.StaffEmail), "Login administrativo nao encontrado.");
+            return View("Login", model);
+        }
+
+        SignIn(user);
+        return RedirectToAction("Index", "Professor");
     }
 
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
         return RedirectToAction("Login");
+    }
+
+    private void SignIn(ApplicationUser user)
+    {
+        HttpContext.Session.SetInt32("UserId", user.Id);
+        HttpContext.Session.SetString("UserName", user.Name);
+        HttpContext.Session.SetString("UserRole", user.Role.ToString());
+        if (!string.IsNullOrWhiteSpace(user.RegistrationCode))
+        {
+            HttpContext.Session.SetString("RegistrationCode", user.RegistrationCode);
+        }
     }
 }

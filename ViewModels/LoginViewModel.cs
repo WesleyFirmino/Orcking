@@ -2,5 +2,6 @@ namespace Orcking.ViewModels;
 
 public class LoginViewModel
 {
-    public int UserId { get; set; }
+    public string StudentFullName { get; set; } = string.Empty;
+    public string StaffEmail { get; set; } = string.Empty;
 }

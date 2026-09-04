@@ -18,4 +18,7 @@ public class ProfessorExamForm
 
     [Range(1, 10)]
     public int ModelCount { get; set; } = 5;
+
+    [DataType(DataType.Date)]
+    public DateTime ApplicationDate { get; set; } = DateTime.Today;
 }

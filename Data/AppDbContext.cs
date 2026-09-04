@@ -6,6 +6,7 @@ namespace Orcking.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
+    public DbSet<ClassRoom> ClassRooms => Set<ClassRoom>();
     public DbSet<Exam> Exams => Set<Exam>();
     public DbSet<Question> Questions => Set<Question>();
     public DbSet<AnswerOption> AnswerOptions => Set<AnswerOption>();
@@ -19,6 +20,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<ApplicationUser>()
             .HasIndex(user => user.Email)
             .IsUnique();
+
+        modelBuilder.Entity<ApplicationUser>()
+            .HasIndex(user => user.Name);
 
         modelBuilder.Entity<Question>()
             .Property(question => question.Weight)

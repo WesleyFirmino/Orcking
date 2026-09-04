@@ -81,18 +81,35 @@ a {
   min-height: 68vh;
 }
 
-.login-copy h1,
+.student-entry h1,
 .page-heading h1 {
   margin: 0;
   font-size: clamp(2.4rem, 8vw, 5.4rem);
   font-weight: 850;
 }
 
-.login-copy p,
+.student-entry p,
 .page-heading p,
 .exam-card p,
 .muted {
   color: var(--muted);
+}
+
+.student-entry {
+  display: grid;
+  gap: 12px;
+}
+
+.student-search {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 12px;
+}
+
+.staff-login {
+  justify-self: end;
+  width: min(100%, 420px);
 }
 
 .eyebrow {
@@ -427,8 +444,10 @@ td small {
   }
 
   .page-heading,
-  .submit-bar {
+  .submit-bar,
+  .student-search {
     align-items: stretch;
+    grid-template-columns: 1fr;
     flex-direction: column;
   }
 }

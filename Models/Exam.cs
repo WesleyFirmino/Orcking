@@ -16,6 +16,8 @@ public class Exam
 
     public int ModelCount { get; set; } = 5;
 
+    public DateTime ApplicationDate { get; set; } = DateTime.Today;
+
     public ExamStatus Status { get; set; } = ExamStatus.Draft;
 
     public int TeacherId { get; set; }

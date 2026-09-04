@@ -8,7 +8,11 @@
         <span class="eyebrow">Professor</span>
         <h1>Provas</h1>
     </div>
-    <a class="btn btn-primary" asp-action="Create">Nova prova</a>
+    <div class="actions-row">
+        <a class="btn btn-outline-light" asp-action="Students">Cadastrar aluno</a>
+        <a class="btn btn-outline-light" asp-action="Classes">Cadastrar classes</a>
+        <a class="btn btn-primary" asp-action="Create">Nova prova</a>
+    </div>
 </div>
 
 <div class="surface table-wrap">
@@ -19,6 +23,7 @@
                 <th>Status</th>
                 <th>Questoes</th>
                 <th>Modelos</th>
+                <th>Aplicacao</th>
                 <th></th>
             </tr>
         </thead>
@@ -33,6 +38,7 @@
                     <td><span class="status-pill">@exam.Status</span></td>
                     <td>@exam.Questions.Count</td>
                     <td>@exam.Models.Count</td>
+                    <td>@exam.ApplicationDate.ToString("dd/MM/yyyy")</td>
                     <td class="text-end">
                         <a class="btn btn-sm btn-outline-light" asp-action="Details" asp-route-id="@exam.Id">Editar</a>
                         <a class="btn btn-sm btn-outline-light" asp-action="Attempts" asp-route-id="@exam.Id">Auditoria</a>

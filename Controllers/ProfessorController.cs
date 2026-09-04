@@ -12,7 +12,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
 {
     public async Task<IActionResult> Index()
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var exams = await db.Exams
             .Include(item => item.Questions)
@@ -26,14 +26,14 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
 
     public IActionResult Create()
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
         return View(new ProfessorExamForm { ModelCount = 5, DurationMinutes = 60 });
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(ProfessorExamForm form)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
         if (!ModelState.IsValid) return View(form);
 
         var exam = new Exam
@@ -42,6 +42,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
             Description = form.Description,
             DurationMinutes = form.DurationMinutes,
             ModelCount = form.ModelCount,
+            ApplicationDate = form.ApplicationDate.Date,
             Status = ExamStatus.Draft,
             TeacherId = CurrentUserId()
         };
@@ -53,7 +54,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
 
     public async Task<IActionResult> Details(int id)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var exam = await db.Exams
             .Include(item => item.Questions)
@@ -69,7 +70,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
     [HttpPost]
     public async Task<IActionResult> AddQuestion(int examId, QuestionImportRow row)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var exam = await db.Exams.Include(item => item.Questions).FirstOrDefaultAsync(item => item.Id == examId);
         if (exam is null) return NotFound();
@@ -82,7 +83,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
     [HttpPost]
     public async Task<IActionResult> ImportCsv(int examId, IFormFile file)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
         if (file.Length == 0) return RedirectToAction(nameof(Details), new { id = examId });
 
         using var reader = new StreamReader(file.OpenReadStream());
@@ -123,7 +124,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
     [HttpPost]
     public async Task<IActionResult> GenerateModels(int id)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var exam = await db.Exams.Include(item => item.Questions).ThenInclude(item => item.Options).FirstOrDefaultAsync(item => item.Id == id);
         if (exam is null) return NotFound();
@@ -135,7 +136,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
     [HttpPost]
     public async Task<IActionResult> Publish(int id)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var exam = await db.Exams.FindAsync(id);
         if (exam is null) return NotFound();
@@ -147,7 +148,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
 
     public async Task<IActionResult> Attempts(int id)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var attempts = await db.ExamAttempts
             .Include(item => item.Student)
@@ -163,20 +164,22 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
 
     public async Task<IActionResult> Students()
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         var students = await db.Users
+            .Include(user => user.ClassRoom)
             .Where(user => user.Role == UserRole.Student)
             .OrderBy(user => user.Name)
             .ToListAsync();
 
+        ViewBag.Classes = await db.ClassRooms.OrderBy(item => item.Name).ToListAsync();
         return View(students);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddStudent(string name, string email, string? registrationCode)
+    public async Task<IActionResult> AddStudent(string name, string email, string? registrationCode, int? classRoomId)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
 
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email))
         {
@@ -191,6 +194,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
                 Name = name.Trim(),
                 Email = email.Trim(),
                 RegistrationCode = registrationCode?.Trim(),
+                ClassRoomId = classRoomId,
                 Role = UserRole.Student
             });
 
@@ -203,7 +207,7 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
     [HttpPost]
     public async Task<IActionResult> ImportStudentsCsv(IFormFile file)
     {
-        if (!RequireTeacher()) return RedirectToAction("Login", "Account");
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
         if (file.Length == 0) return RedirectToAction(nameof(Students));
 
         using var reader = new StreamReader(file.OpenReadStream());
@@ -230,12 +234,44 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
                 Name = columns[0].Trim(),
                 Email = email,
                 RegistrationCode = columns.Length > 2 ? columns[2].Trim() : null,
+                ClassRoomId = columns.Length > 3 && int.TryParse(columns[3].Trim(), out var classRoomId) ? classRoomId : null,
                 Role = UserRole.Student
             });
         }
 
         await db.SaveChangesAsync();
         return RedirectToAction(nameof(Students));
+    }
+
+    public async Task<IActionResult> Classes()
+    {
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
+
+        var classes = await db.ClassRooms
+            .Include(item => item.Students)
+            .OrderBy(item => item.Name)
+            .ToListAsync();
+
+        return View(classes);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddClass(string name, string? shift)
+    {
+        if (!RequireStaff()) return RedirectToAction("Login", "Account");
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            db.ClassRooms.Add(new ClassRoom
+            {
+                Name = name.Trim(),
+                Shift = shift?.Trim()
+            });
+
+            await db.SaveChangesAsync();
+        }
+
+        return RedirectToAction(nameof(Classes));
     }
 
     private static Question BuildQuestion(int examId, QuestionImportRow row)
@@ -257,6 +293,6 @@ public class ProfessorController(AppDbContext db, ExamModelGenerator generator) 
         };
     }
 
-    private bool RequireTeacher() => HttpContext.Session.GetString("UserRole") == UserRole.Teacher.ToString();
+    private bool RequireStaff() => HttpContext.Session.GetString("UserRole") is "Teacher" or "Admin";
     private int CurrentUserId() => HttpContext.Session.GetInt32("UserId") ?? 0;
 }

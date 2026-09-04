@@ -1,0 +1,50 @@
+@model IEnumerable<Orcking.Models.ClassRoom>
+@{
+    ViewData["Title"] = "Classes";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Professor</span>
+        <h1>Classes</h1>
+        <p>Cadastre as salas para vincular os alunos antes da aplicacao das provas.</p>
+    </div>
+</div>
+
+<form asp-action="AddClass" method="post" class="surface form-grid">
+    <div>
+        <label>Nome da classe</label>
+        <input name="name" class="form-control" placeholder="Ex: 3A - Ensino Medio" />
+    </div>
+    <div>
+        <label>Turno</label>
+        <input name="shift" class="form-control" placeholder="Manha, tarde ou noite" />
+    </div>
+    <div class="actions-row align-self-end">
+        <button class="btn btn-primary" type="submit">Cadastrar classe</button>
+    </div>
+</form>
+
+<div class="surface table-wrap mt-4">
+    <table class="table table-dark align-middle">
+        <thead>
+            <tr>
+                <th>Classe</th>
+                <th>Turno</th>
+                <th>Alunos</th>
+                <th>Id para CSV</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var classRoom in Model)
+            {
+                <tr>
+                    <td>@classRoom.Name</td>
+                    <td>@classRoom.Shift</td>
+                    <td>@classRoom.Students.Count</td>
+                    <td>@classRoom.Id</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

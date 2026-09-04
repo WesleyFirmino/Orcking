@@ -15,7 +15,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (HttpContext.Session.GetString("UserRole") == "Teacher")
+        if (HttpContext.Session.GetString("UserRole") is "Teacher" or "Admin")
         {
             return RedirectToAction("Index", "Professor");
         }

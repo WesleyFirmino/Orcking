@@ -1,27 +1,25 @@
 @model Orcking.ViewModels.LoginViewModel
-@using Orcking.Models
 @{
     ViewData["Title"] = "Entrar";
-    var users = (IEnumerable<ApplicationUser>)ViewBag.Users;
 }
 
 <section class="login-panel">
-    <div class="login-copy">
-        <span class="eyebrow">MVP academico</span>
+    <form asp-action="StudentLogin" method="post" class="student-entry">
+        <span class="eyebrow">Area do aluno</span>
         <h1>Orcking</h1>
-        <p>Plataforma para aplicar provas com modelos aleatorios, marca d'agua individual e auditoria durante a tentativa.</p>
-    </div>
+        <p>Informe seu nome completo para acessar as avaliacoes disponiveis.</p>
+        <div class="student-search surface">
+            <input asp-for="StudentFullName" class="form-control" placeholder="Nome completo do aluno" autocomplete="name" />
+            <button class="btn btn-primary" type="submit">Entrar</button>
+        </div>
+        <span asp-validation-for="StudentFullName" class="text-warning"></span>
+    </form>
 
-    <form asp-action="Login" method="post" class="surface form-stack">
-        <h2>Acessar ambiente</h2>
-        <label asp-for="UserId">Perfil de teste</label>
-        <select asp-for="UserId" class="form-select">
-            <option value="">Selecione</option>
-            @foreach (var user in users)
-            {
-                <option value="@user.Id">@user.Name - @user.Role</option>
-            }
-        </select>
-        <button class="btn btn-primary w-100" type="submit">Entrar</button>
+    <form asp-action="StaffLogin" method="post" class="surface form-stack staff-login">
+        <h2>Login</h2>
+        <label asp-for="StaffEmail">Professor ou administrador</label>
+        <input asp-for="StaffEmail" class="form-control" type="email" placeholder="email@instituicao.com" />
+        <span asp-validation-for="StaffEmail" class="text-warning"></span>
+        <button class="btn btn-primary w-100" type="submit">Acessar</button>
     </form>
 </section>

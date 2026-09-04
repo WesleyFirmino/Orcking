@@ -18,20 +18,22 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Professor" asp-action="Index">Professor</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Professor" asp-action="Students">Alunos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Aluno</a>
-                        </li>
-                    </ul>
+                    <ul class="navbar-nav flex-grow-1"></ul>
                     <div class="nav-user">
-                        @Context.Session.GetString("UserName")
-                        <a class="btn btn-sm btn-outline-light ms-2" asp-controller="Account" asp-action="Logout">Sair</a>
+                        @if (Context.Session.GetString("UserRole") is "Teacher" or "Admin")
+                        {
+                            <a class="btn btn-sm btn-outline-light" asp-controller="Professor" asp-action="Index">Area administrativa</a>
+                            <a class="btn btn-sm btn-outline-light ms-2" asp-controller="Account" asp-action="Logout">Sair</a>
+                        }
+                        else if (Context.Session.GetString("UserRole") == "Student")
+                        {
+                            <span>@Context.Session.GetString("UserName")</span>
+                            <a class="btn btn-sm btn-outline-light ms-2" asp-controller="Account" asp-action="Logout">Sair</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-light" asp-controller="Account" asp-action="Login">Login</a>
+                        }
                     </div>
                 </div>
             </div>

@@ -15,5 +15,9 @@ public class ApplicationUser
     [MaxLength(30)]
     public string? RegistrationCode { get; set; }
 
+    public int? ClassRoomId { get; set; }
+
+    public ClassRoom? ClassRoom { get; set; }
+
     public UserRole Role { get; set; }
 }

@@ -24,11 +24,25 @@ public static class DbInitializer
             Role = UserRole.Teacher
         };
 
+        var admin = new ApplicationUser
+        {
+            Name = "Administrador Orcking",
+            Email = "admin@orcking.local",
+            Role = UserRole.Admin
+        };
+
+        var classRoom = new ClassRoom
+        {
+            Name = "3A - Ensino Medio",
+            Shift = "Manha"
+        };
+
         var student = new ApplicationUser
         {
             Name = "Aluno Demo",
             Email = "aluno@orcking.local",
             RegistrationCode = "RA2026001",
+            ClassRoom = classRoom,
             Role = UserRole.Student
         };
 
@@ -38,6 +52,7 @@ public static class DbInitializer
             Description = "Prova objetiva usada para validar o fluxo antifraude do MVP.",
             DurationMinutes = 45,
             ModelCount = 5,
+            ApplicationDate = DateTime.Today,
             Status = ExamStatus.Published,
             Teacher = teacher,
             Questions =
@@ -51,7 +66,8 @@ public static class DbInitializer
             ]
         };
 
-        db.Users.AddRange(teacher, student);
+        db.Users.AddRange(teacher, admin, student);
+        db.ClassRooms.Add(classRoom);
         db.Exams.Add(exam);
         await db.SaveChangesAsync();
 

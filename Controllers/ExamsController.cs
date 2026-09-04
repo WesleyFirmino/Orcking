@@ -19,6 +19,11 @@ public class ExamsController(AppDbContext db, ExamScoringService scoring) : Cont
             .FirstOrDefaultAsync(item => item.Id == id && item.Status == ExamStatus.Published);
 
         if (exam is null) return NotFound();
+        if (exam.ApplicationDate.Date != DateTime.Today)
+        {
+            return RedirectToAction("Index", "Student");
+        }
+
         return View(exam);
     }
 
@@ -52,6 +57,10 @@ public class ExamsController(AppDbContext db, ExamScoringService scoring) : Cont
 
         var exam = await db.Exams.Include(item => item.Models).FirstOrDefaultAsync(item => item.Id == id);
         if (exam is null || exam.Status != ExamStatus.Published || exam.Models.Count == 0) return NotFound();
+        if (exam.ApplicationDate.Date != DateTime.Today)
+        {
+            return RedirectToAction("Index", "Student");
+        }
 
         var model = exam.Models.OrderBy(item => Guid.NewGuid()).First();
         var attempt = new ExamAttempt
